@@ -6,6 +6,7 @@ import java.util.List;
 
 import co.yedam.vo.BoardVO;
 import co.yedam.vo.LikeVO;
+import oracle.net.aso.i;
 
 /*
  * 목록(R), 등록(C), 수정(U), 삭제(D)
@@ -22,13 +23,14 @@ public class LikeDAO extends DAO{
 				+ "    	user_no"
 				+ "		)"
 				+ " 	values(seq_like_no.NEXTVAL, ?, ?)";
-		conn = getConn();
 		try {
+			conn = getConn();
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, lvo.getBoardNo());
 			psmt.setInt(2, lvo.getUserNo());
 			
 			int r = psmt.executeUpdate(); // 쿼리 실행.
+			conn.close();
 			if(r == 1) {
 				return true; // 정상 처리
 			}
@@ -80,7 +82,7 @@ public class LikeDAO extends DAO{
 				
 				list.add(bvo);
 			}
-			
+			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -124,6 +126,7 @@ public class LikeDAO extends DAO{
 				
 				list.add(bvo);
 			}
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -169,6 +172,7 @@ public class LikeDAO extends DAO{
 				
 				list.add(bvo);
 			}
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -207,7 +211,7 @@ public class LikeDAO extends DAO{
 
 				list.add(bvo);
 			}
-			
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -226,13 +230,17 @@ public class LikeDAO extends DAO{
 			psmt.setInt(1, lvo.getUserNo());
 			psmt.setInt(2, lvo.getBoardNo());
 			rs = psmt.executeQuery();
+			int cnt = 0;
 			if(rs.next()) {
-				return rs.getInt(1);
+//				return rs.getInt(1);
+				cnt = rs.getInt(1);
 			}
+			conn.close();
+			return cnt;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 		return 0;
 	}
 
@@ -245,9 +253,13 @@ public class LikeDAO extends DAO{
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, userNo);
 			rs = psmt.executeQuery();
+			int cnt = 0;
 			if(rs.next()) {
-				return rs.getInt(1);
+//				return rs.getInt(1);
+				cnt = rs.getInt(1);
 			}
+			conn.close();
+			return cnt;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -264,9 +276,15 @@ public class LikeDAO extends DAO{
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, boardNo);
 			rs = psmt.executeQuery();
+			String bv = null;
 			if(rs.next()) {
-				return rs.getString("board_view");
+				bv = rs.getString("board_view");
 			}
+
+			conn.close();
+			
+			return bv;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -313,6 +331,7 @@ public class LikeDAO extends DAO{
 			psmt.setInt(2, bvo.getBoardNo());
 			
 			int r = psmt.executeUpdate(); // 쿼리 실행.
+			conn.close();
 			if(r == 1) {
 				return true; // 정상 처리
 			}
@@ -334,6 +353,7 @@ public class LikeDAO extends DAO{
 			psmt.setInt(1, bvo.getBoardNo());
 			
 			int r = psmt.executeUpdate(); // 쿼리 실행.
+			conn.close();
 			if(r == 1) {
 				return true; // 정상 처리
 			}

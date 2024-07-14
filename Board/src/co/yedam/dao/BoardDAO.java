@@ -409,16 +409,13 @@ public class BoardDAO extends DAO{
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, boardNo);
 			rs = psmt.executeQuery();
-			boolean isExists = false;
+			int cnt = 0;
 			if(rs.next()) {
 //				return rs.getInt(1);
-				isExists = true;
-				
+				cnt = rs.getInt(1);
 			}
 			conn.close();
-			if(isExists) {
-				return 1;
-			}
+			return cnt;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
