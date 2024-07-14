@@ -29,7 +29,7 @@ public class BoardVO {
 
 
 	public String briefShow() {
-//		return boardNo + "  " + title + "  " + boardView + "  " + boardLike + "  " + dateUpdated;
+//		return boardNo + "  " + title + "  " + boardView + "  " + boardLike + "  " + dateCreated;
 		String blank ="";
 		for (int i = 0; i <= (20-this.title.length())/2; i++) {
 			blank += " ";
@@ -40,7 +40,7 @@ public class BoardVO {
 				this.userName,
 				this.boardView,
 				this.boardLike,
-				this.dateUpdated
+				this.dateCreated
 				);
 	}
 	

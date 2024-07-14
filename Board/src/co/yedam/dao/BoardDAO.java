@@ -148,146 +148,70 @@ public class BoardDAO extends DAO{
 		return list;
 	} // end of selectBoard().
 	
-	// 목록 반환 기능.
+	
 	public List<BoardVO> selectList(){
-		String sql = "	SELECT  * "
-				+ "		FROM"    
-				+ "    	("
-				+ "    	select	b.board_no      as board_no,"
-				+ "            	b.title         as title,"
-				+ "            	u.user_name     as user_name,"
-				+ "            	b.board_view    as board_view,"
-				+ "            	b.board_like    as board_like,"
-				+ "            	b.date_updated  as date_updated"
-				+ "    	from    tbl_user    u"
-				+ "    	join    tbl_board   b"
-				+ "    	on      u.user_no = b.user_no"
-				+ "    	where   b.date_deleted is null"
-				+ "    	order by b.date_created desc"
-				+ "    	)"
-				+ "		WHERE   ROWNUM <=9";
+//		String sql = "	SELECT  * "
+//				+ "		FROM("
+//				+ "		SELECT   * "
+//				+ "		FROM"    
+//				+ "    	("
+//				+ "    	select	rownum as rn,"
+//				+ "    			b.board_no      as board_no,"
+//				+ "            	b.title         as title,"
+//				+ "            	u.user_name     as user_name,"
+//				+ "            	b.board_view    as board_view,"
+//				+ "        		b.board_like	as board_like,"
+//				+ "            	b.date_created  as date_created"
+//				+ "    	from    tbl_user    u"
+//				+ "    	join    tbl_board   b"
+//				+ "    	on      u.user_no = b.user_no"
+//				+ "    	where   b.date_deleted is null"
+//				+ "    	order by b.date_created desc"
+//				+ "    	)"
+//				+ "		WHERE   ROWNUM <= ?)" // 정렬 후 처음부터 ?개만 조회 : row * (enPage) --> 5* 3
+//				+ "WHERE   rn > ?" // 앞에서 부터 ? 만큼 자름 : row * (endPage-1) --> 5 * 2
+//				+ "";
+		
+		String sql =""
+				+ "	SELECT *"
+				+ "	FROM    "
+				+ "	("
+				+ "    SELECT ROWNUM AS rn,"
+				+ "            board_no,"
+				+ "            title,"
+				+ "            user_name,"
+				+ "            board_view,"
+				+ "            board_like,"
+				+ "            date_created"
+				+ "    FROM ("
+				+ "        SELECT"
+				+ "            "
+				+ "            b.board_no as board_no,"
+				+ "            b.title as title,"
+				+ "            u.user_name as user_name,"
+				+ "            b.board_view as board_view,"
+				+ "            b.board_like as board_like,"
+				+ "            b.date_created as date_created"
+				+ "        FROM"
+				+ "            tbl_user u"
+				+ "        JOIN tbl_board b ON u.user_no = b.user_no"
+				+ "        WHERE"
+				+ "            b.date_deleted IS NULL"
+				+ "        AND u.date_deleted IS NULL"
+				+ ""
+				+ "        ORDER BY  b.date_created desc"
+				+ "    )"
+				+ "	)"
+				+ "	where rn > ? and rn <= ?"
+				+ "	";
+
 		List<BoardVO> list = new ArrayList<>();
 		
 		try {
 			conn = getConn();
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-			while(rs.next()) {
-				BoardVO bvo = new BoardVO();
-				bvo.setBoardNo(rs.getInt("board_no"));
-				bvo.setTitle(rs.getString("title"));
-				bvo.setUserName(rs.getString("user_name"));
-				bvo.setBoardView(rs.getString("board_view"));
-				bvo.setBoardLike(rs.getString("board_like"));
-				bvo.setDateUpdated(rs.getDate("date_updated"));
-				
-				list.add(bvo);
-			}
-			conn.close();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return list;
-	} // end of selectList().
-	// 목록 반환 기능.
-	public List<BoardVO> selectListLike(){
-		String sql = "	SELECT  * "
-				+ "		FROM"    
-				+ "    	("
-				+ "    	select	b.board_no      as board_no,"
-				+ "            	b.title         as title,"
-				+ "            	u.user_name     as user_name,"
-				+ "            	b.board_view    as board_view,"
-				+ "        		("
-				+ "            	SELECT COUNT(*)"
-				+ "            	FROM tbl_like l"
-				+ "            	WHERE l.board_no = b.board_no"
-				+ "        		) as board_like,"
-				+ "            	b.date_updated  as date_updated"
-				+ "    	from    tbl_user    u"
-				+ "    	join    tbl_board   b"
-				+ "    	on      u.user_no = b.user_no"
-				+ "    	where   b.date_deleted is null"
-				+ "    	order by b.date_created desc"
-				+ "    	)"
-				+ "		WHERE   ROWNUM <=9";
-		List<BoardVO> list = new ArrayList<>();
-		
-		try {
-			conn = getConn();
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-			while(rs.next()) {
-				BoardVO bvo = new BoardVO();
-				bvo.setBoardNo(rs.getInt("board_no"));
-				bvo.setTitle(rs.getString("title"));
-				bvo.setUserName(rs.getString("user_name"));
-				bvo.setBoardView(rs.getString("board_view"));
-				bvo.setBoardLike(rs.getString("board_like"));
-				bvo.setDateUpdated(rs.getDate("date_updated"));
-				
-				list.add(bvo);
-
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return list;
-	} // end of selectList().
-	
-
-	
-	public List<BoardVO> selectListLikeAll(){
-		String sql = "	SELECT  * "
-				+ "		FROM("
-				+ "		SELECT   * "
-				+ "		FROM"    
-				+ "    	("
-				+ "    	select	rownum as rn,"
-				+ "    			b.board_no      as board_no,"
-				+ "            	b.title         as title,"
-				+ "            	u.user_name     as user_name,"
-				+ "            	b.board_view    as board_view,"
-				+ "        		("
-				+ "            	SELECT COUNT(*)"
-				+ "            	FROM tbl_like l"
-				+ "            	WHERE l.board_no = b.board_no"
-				+ "        		) as board_like,"
-				+ "            	b.date_updated  as date_updated"
-				+ "    	from    tbl_user    u"
-				+ "    	join    tbl_board   b"
-				+ "    	on      u.user_no = b.user_no"
-				+ "    	where   b.date_deleted is null"
-				+ "    	order by b.date_created desc"
-				+ "    	)"
-				+ "		WHERE   ROWNUM <=?)" // 정렬 후 처음부터 ?개만 조회 : row * (enPage) --> 5* 3
-				+ "WHERE   rn >=?" // 앞에서 부터 ? 만큼 자름 : row * (endPage-1) --> 5 * 2
-				+ "";
-
-//		String sqlCount = "select count(*) from tbl_board where date_deleted is null";
-		
-		List<BoardVO> list = new ArrayList<>();
-		
-		try {
-			conn = getConn();
-//			stmt = conn.createStatement();
-//			rs = stmt.executeQuery(sqlCount);
-//			while(rs.next()) {
-//				totBoard = rs.getInt("count(*)");
-////				System.out.println("게시글 수 : " + totBoard);
-//			}
-			
-			// setBoartConut 메소드 따로 만들기
-			// totBoard / rowBoard : 20 / 5 = 4 총 페이지 수
-			// 햔제 페이지 표시
-			
 			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1, rowBoard * (currPage) );
-			psmt.setInt(2, rowBoard * (currPage-1));
+			psmt.setInt(1, rowBoard * (currPage - 1));	// 시작
+			psmt.setInt(2, rowBoard * currPage);	// 끝
 			rs = psmt.executeQuery();
 			while(rs.next()) {
 				BoardVO bvo = new BoardVO();
@@ -296,7 +220,7 @@ public class BoardDAO extends DAO{
 				bvo.setUserName(rs.getString("user_name"));
 				bvo.setBoardView(rs.getString("board_view"));
 				bvo.setBoardLike(rs.getString("board_like"));
-				bvo.setDateUpdated(rs.getDate("date_updated"));
+				bvo.setDateCreated(rs.getDate("date_created"));
 				
 				list.add(bvo);
 			}
@@ -308,6 +232,64 @@ public class BoardDAO extends DAO{
 		
 		return list;
 	} // end of selectList().
+	
+	
+	public List<BoardVO> selectListAll(){
+		String sql =""
+				+ "    SELECT ROWNUM AS rn,"
+				+ "            board_no,"
+				+ "            title,"
+				+ "            user_name,"
+				+ "            board_view,"
+				+ "            board_like,"
+				+ "            date_created"
+				+ "    FROM ("
+				+ "        SELECT"
+				+ "            "
+				+ "            b.board_no as board_no,"
+				+ "            b.title as title,"
+				+ "            u.user_name as user_name,"
+				+ "            b.board_view as board_view,"
+				+ "            b.board_like as board_like,"
+				+ "            b.date_created as date_created"
+				+ "        FROM"
+				+ "            tbl_user u"
+				+ "        JOIN tbl_board b ON u.user_no = b.user_no"
+				+ "        WHERE"
+				+ "            b.date_deleted IS NULL"
+				+ "        AND u.date_deleted IS NULL"
+				+ ""
+				+ "        ORDER BY  b.date_created desc"
+				+ "    )"
+				+ "	";
+		
+		List<BoardVO> list = new ArrayList<>();
+		
+		try {
+			conn = getConn();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				BoardVO bvo = new BoardVO();
+				bvo.setBoardNo(rs.getInt("board_no"));
+				bvo.setTitle(rs.getString("title"));
+				bvo.setUserName(rs.getString("user_name"));
+				bvo.setBoardView(rs.getString("board_view"));
+				bvo.setBoardLike(rs.getString("board_like"));
+				bvo.setDateCreated(rs.getDate("date_created"));
+				
+				list.add(bvo);
+			}
+			conn.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	} // end of selectList().
+	
+	
 	public List<BoardVO> selectLike(int boardNo){
 		String sql = "	SELECT  * "
 				+ "		FROM"    
@@ -362,44 +344,6 @@ public class BoardDAO extends DAO{
 	} // end of selectList().
 
 	
-	public List<BoardVO> selectListAll(){
-		String sql = ""
-				+ "    select  b.board_no      as board_no,"
-				+ "            b.title         as title,"
-				+ "            u.user_name     as user_name,"
-				+ "            b.board_view    as board_view,"
-				+ "            b.board_like    as board_like,"
-				+ "            b.date_updated  as date_updated"
-				+ "    from    tbl_user    u"
-				+ "    join    tbl_board   b"
-				+ "    on      u.user_no = b.user_no"
-				+ "    where   b.date_deleted is null"
-				+ "    order by b.date_created desc";
-		List<BoardVO> list = new ArrayList<>();
-		
-		try {
-			conn = getConn();
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-			while(rs.next()) {
-				BoardVO bvo = new BoardVO();
-				bvo.setBoardNo(rs.getInt("board_no"));
-				bvo.setTitle(rs.getString("title"));
-				bvo.setUserName(rs.getString("user_name"));
-				bvo.setBoardView(rs.getString("board_view"));
-				bvo.setBoardLike(rs.getString("board_like"));
-				bvo.setDateUpdated(rs.getDate("date_updated"));
-
-				list.add(bvo);
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return list;
-	} // end of selectListAll().	
-	
 	// 단건 조회.
 	public int selectExists(int boardNo) {
 		String sql = "select count(1) from tbl_board";
@@ -446,7 +390,6 @@ public class BoardDAO extends DAO{
 		return null;
 	}	
 	
-	
 	// 수정 기능.
 	public boolean updateBoard(BoardVO bvo) {
 		String sql = " update tbl_board";
@@ -485,6 +428,39 @@ public class BoardDAO extends DAO{
 			psmt.setString(1, String.valueOf(Integer.parseInt(bvo.getBoardView()) + 1) ); // 현재 조회수 + 1
 			psmt.setInt(2, bvo.getBoardNo());
 			
+			int r = psmt.executeUpdate(); // 쿼리 실행.
+			conn.close();
+			if(r == 1) {
+				return true; // 정상 처리
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false; // 비정상 처리.
+	}
+	// 수정 기능.
+	public boolean updateBoardLike(int boardNo) {
+		
+		String sql = " 	update 	tbl_board"
+		+ " 	   		set	  	board_like = "
+		+ "        			("
+		+ "            		SELECT 	COUNT(*)"
+		+ "            		FROM 	tbl_like l "
+		+ "					JOIN    tbl_board b"
+		+ "            		ON	 	l.board_no = b.board_no"
+		+ "            		WHERE	l.date_deleted is null"
+		+ "            		AND		b.date_deleted is null"
+		+ "            		AND		b.board_no = ?"
+		+ "        			)"		
+		+ "       		where  	board_no = ?"
+		+ "       		and	  	date_deleted is null";
+		
+		try {
+			conn = getConn();
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, boardNo);
+			psmt.setInt(2, boardNo);
 			int r = psmt.executeUpdate(); // 쿼리 실행.
 			conn.close();
 			if(r == 1) {

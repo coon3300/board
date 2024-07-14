@@ -24,7 +24,7 @@ public class BoardControl {
 
 		bdao.setTotBoard();
 		
-		boardListAll();
+		boardList();
 
 		while (isTrue) {
 			switch(page) {
@@ -50,7 +50,7 @@ public class BoardControl {
 				}else {
 					bdao.setCurrPage(bdao.getCurrPage() - 1 );
 				}
-				boardListAll();
+				boardList();
 				
 				break;
 			case ">":
@@ -59,13 +59,18 @@ public class BoardControl {
 				}else {
 					bdao.setCurrPage(bdao.getCurrPage() + 1);
 				}
-				boardListAll();
+				boardList();
 				
 				break;
+			case "0":
+//				boardList();
+				boardListAll();
+				page = ""; 
+				break;				
 			case "L":
 			case "l":
 //				boardList();
-				boardListAll();
+				boardList();
 				page = ""; 
 				break;
 			case "C":
@@ -173,9 +178,11 @@ public class BoardControl {
 		lvo.setUserNo(userNo);
 		
 		if (ldao.selectExists(lvo) != 1) {
-			// 추천한적 없음, 추천 가능
+			// Like
 			if(ldao.insertLike(lvo)) {
-				System.out.println("추천했습니다.");
+			}
+			// Board
+			if(bdao.updateBoardLike(BoardNo)) {
 			}
 		}else {
 			System.out.println("이미 추천 했습니다.");
@@ -206,18 +213,19 @@ public class BoardControl {
 	}
 
 	void boardList() {
-//		List<BoardVO> boards = bdao.selectList();
-		List<BoardVO> boards = bdao.selectListLike();
+//		List<BoardVO> boards = bdao.selectListAll();
+		List<BoardVO> boards = bdao.selectList(); // 4페이지 앞까지, 3페이지 부터 출력
 		System.out.println("------------------------------------------------------");
 		System.out.printf("%4s %-20s %4s %4s %4s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", "작성일시    ");
 		System.out.println("------------------------------------------------------");
 		for (BoardVO bvo : boards) {
 			System.out.println(bvo.briefShow());
 		}
-	} // end of boardList()	
+		System.out.printf("(<)이전 페이지         [ %d페이지 / 총 %d페이지 ]        (>)다음 페이지\n", bdao.getCurrPage(), bdao.getTotPage());
+	} // end of boardListAll()
 	void boardListAll() {
 //		List<BoardVO> boards = bdao.selectListAll();
-		List<BoardVO> boards = bdao.selectListLikeAll(); // 4페이지 앞까지, 3페이지 부터 출력
+		List<BoardVO> boards = bdao.selectListAll(); // 4페이지 앞까지, 3페이지 부터 출력
 		System.out.println("------------------------------------------------------");
 		System.out.printf("%4s %-20s %4s %4s %4s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", "작성일시    ");
 		System.out.println("------------------------------------------------------");
@@ -264,7 +272,5 @@ public class BoardControl {
 			
 			break; // boards 리스트에 1개의 객체만 리턴 : 1번 실행 후 for문 탈출
 		}
-		
-
 	} // end of readBoard()
 }

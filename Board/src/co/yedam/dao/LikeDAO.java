@@ -14,7 +14,7 @@ import oracle.net.aso.i;
  */
 public class LikeDAO extends DAO{
 	
-	// 등록 기능.
+	// 추천.
 	public boolean insertLike(LikeVO lvo) {
 
 		String sql = " 	INSERT INTO tbl_like ("
