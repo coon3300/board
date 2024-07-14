@@ -180,9 +180,10 @@ public class BoardControl {
 		if (ldao.selectExists(lvo) != 1) {
 			// Like
 			if(ldao.insertLike(lvo)) {
-			}
-			// Board
-			if(bdao.updateBoardLike(BoardNo)) {
+				// Board
+				if(bdao.updateBoardLike(BoardNo)) {
+				}
+				System.out.println("추천 했습니다.");
 			}
 		}else {
 			System.out.println("이미 추천 했습니다.");
