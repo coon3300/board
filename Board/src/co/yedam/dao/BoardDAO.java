@@ -50,8 +50,8 @@ public class BoardDAO extends DAO{
 				this.totBoard = Integer.parseInt(rs.getString("count(*)"));
 				this.totPage = (int)Math.ceil((double)totBoard / rowBoard);
 			}
-			
 			conn.close();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -87,19 +87,15 @@ public class BoardDAO extends DAO{
 			psmt.setString(3, bvo.getBoardContent());
 			
 			int r = psmt.executeUpdate(); // 쿼리 실행.
-			if(r == 1) {
-				//do nothing
-			}else {
-				return false; // 비 정상 처리
-			}
 			conn.close();
-			return true; // 정상 처리
+			if(r == 1) {
+				return true; // 정상 처리
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false; // 비 정상 처리
-		
 	}
 	
 	
@@ -233,9 +229,9 @@ public class BoardDAO extends DAO{
 				bvo.setDateUpdated(rs.getDate("date_updated"));
 				
 				list.add(bvo);
-				conn.close();
 
 			}
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -395,10 +391,8 @@ public class BoardDAO extends DAO{
 				bvo.setDateUpdated(rs.getDate("date_updated"));
 
 				list.add(bvo);
-				conn.close();
-
 			}
-			
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -415,13 +409,16 @@ public class BoardDAO extends DAO{
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, boardNo);
 			rs = psmt.executeQuery();
+			boolean isExists = false;
 			if(rs.next()) {
-				// do nothing
-			}else {
-				return 0;
+//				return rs.getInt(1);
+				isExists = true;
+				
 			}
 			conn.close();
-			return rs.getInt(1);
+			if(isExists) {
+				return 1;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -439,12 +436,12 @@ public class BoardDAO extends DAO{
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, boardNo);
 			rs = psmt.executeQuery();
+			String bv = null;
 			if(rs.next()) {
-			}else {
-				return null;
+				bv = rs.getString("board_view");
 			}
 			conn.close();
-			return rs.getString("board_view");
+			return bv;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -468,13 +465,10 @@ public class BoardDAO extends DAO{
 			psmt.setInt(3, bvo.getBoardNo());
 			
 			int r = psmt.executeUpdate(); // 쿼리 실행.
-			if(r == 1) {
-				// do nothing
-			}else {
-				return false;
-			}
 			conn.close();
-			return true; // 정상 처리
+			if(r == 1) {
+				return true; // 정상 처리
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -495,13 +489,10 @@ public class BoardDAO extends DAO{
 			psmt.setInt(2, bvo.getBoardNo());
 			
 			int r = psmt.executeUpdate(); // 쿼리 실행.
-			if(r == 1) {
-				// do nothing
-			}else {
-				return false;
-			}
 			conn.close();
-			return true; // 정상 처리
+			if(r == 1) {
+				return true; // 정상 처리
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -518,15 +509,12 @@ public class BoardDAO extends DAO{
 			conn = getConn();
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, bvo.getBoardNo());
-			
 			int r = psmt.executeUpdate(); // 쿼리 실행.
-			if(r == 1) {
-				// do nothing
-			}else {
-				return false;
-			}
 			conn.close();
-			return true; // 정상 처리
+			if(r == 1) {
+				return true; // 정상 처리
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
