@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.yedam.vo.BoardVO;
+import co.yedam.vo.UserVO;
 
 /*
  * 목록(R), 등록(C), 수정(U), 삭제(D)
  * 주의: DAO 메시지(System.out.println)가 없음.
  */
-public class BoardDAO extends DAO{
+public class UserDAO extends DAO{
 	
 	private int rowBoard = 5; // 게시글 5개
 	private int totBoard = 0; // 게시글 수 초기화
@@ -392,8 +393,57 @@ public class BoardDAO extends DAO{
 		
 		return 0;
 	}
-
-
+	
+	// 단건 조회.
+	public int selectExistsUserdId(String userId) {
+		String sql = "	select	count(1) "
+				+ "		from 	tbl_user"
+				+ "     where	user_id = ?"
+				+ "     and	 	date_deleted is null";
+		String id = null;
+		try {
+			conn = getConn();
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, userId);
+			rs = psmt.executeQuery();
+			int cnt = 0;
+			if(rs.next()) {
+//				return rs.getInt(1);
+				cnt = rs.getInt(1);
+			}
+			conn.close();
+			return cnt;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}	
+	
+	// 단건 조회.
+	public String selectUserPwd(String userId) {
+		String sql = "	select	user_pwd "
+				+ "		from 	tbl_user"
+				+ "     where	user_id = ?"
+				+ "     and	 	date_deleted is null";
+		String userPwd = null;
+		try {
+			conn = getConn();
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, userId);
+			rs = psmt.executeQuery();
+			if(rs.next()) {
+//				return rs.getInt(1);
+				userPwd = rs.getString("user_pwd");
+			}
+			conn.close();
+			return userPwd;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return userPwd;
+	}
 	
 
 	// 조휘수 업데이트.

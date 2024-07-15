@@ -5,8 +5,10 @@ import java.util.Scanner;
 
 import co.yedam.dao.BoardDAO;
 import co.yedam.dao.LikeDAO;
+import co.yedam.dao.UserDAO;
 import co.yedam.vo.BoardVO;
 import co.yedam.vo.LikeVO;
+import co.yedam.vo.UserVO;
 
 /*
  * 사용자 입력을 가이드, 처리된 결과 출력.
@@ -14,9 +16,46 @@ import co.yedam.vo.LikeVO;
 public class BoardControl {
 
 	Scanner scn = new Scanner(System.in);
-//	StudentDAO sdao = new StudentDAO();
 	BoardDAO bdao = new BoardDAO();
 	LikeDAO ldao = new LikeDAO();
+	UserDAO udao = new UserDAO();
+	
+	int userNo = 0;
+	
+	public void login() {
+		
+		String userId = null;
+		while (true) {
+			System.out.print("ID 입력>");
+			userId = scn.nextLine();
+
+
+			if (udao.selectExistsUserdId(userId) == 1) {
+				// ID 존재.
+				break;
+			}
+			System.out.println("찾는 ID가 없음. ID 다시 입력>");
+		}
+		
+		while (true) {
+			String userPwd = null;
+			System.out.print("비밀번호 입력>");
+			userPwd = scn.nextLine();
+			
+			System.out.println("userPwd : " + userPwd);
+//			System.out.println("udao.selectUserPwd(userNo) : " + udao.selectUserPwd(userNo));
+			
+//			UserVO uvo= new UserVO();
+//			uvo.setUserId(userId);
+//			uvo.setUserPwd(userPwd);
+			if (userPwd.equals(udao.selectUserPwd(userId))) {
+				// ID 존재.
+				break;
+			}
+			System.out.println("비밀번호가 다릅니다. 비밀번호 다시 입력>");
+		}
+	}
+	
 	
 	public void run() {
 		boolean isTrue = true;
@@ -94,10 +133,16 @@ public class BoardControl {
 				page = ""; 
 				break;
 			case "+":
-				likeBoard();
-//				ldao.likeBoard();
-				page = ""; 
-				
+				if(page == "r") {
+					likeBoard();
+					page = ""; 
+				}
+				break;
+			case "-":
+				if(page == "r") {
+					likeBoardCancel();
+					page = ""; 
+				}
 				break;
 			case "X":
 			case "x":
@@ -114,7 +159,7 @@ public class BoardControl {
 			System.out.println("삭제할 글 번호>");
 			boardNo = Integer.parseInt(scn.nextLine());
 
-			if (bdao.selectExists(boardNo) == 1) {
+			if (bdao.selectExistsBoardNo(boardNo) == 1) {
 				// 학생번호 존재.
 				break;
 			}
@@ -136,7 +181,7 @@ public class BoardControl {
 			System.out.println("변경할 글 번호>");
 			boardNo = Integer.parseInt(scn.nextLine());
 
-			if (bdao.selectExists(boardNo) == 1) {
+			if (bdao.selectExistsBoardNo(boardNo) == 1) {
 				// 글 번호 존재.
 				break;
 			}
@@ -157,13 +202,15 @@ public class BoardControl {
 		System.out.println("수정완료");
 		}
 	}
+	
+	// ㅊ천
 	void likeBoard() {
 		int BoardNo = 0; // 블럭 레벨 변수
 		while (true) {
 			System.out.println("추천할 글 번호>");
 			BoardNo = Integer.parseInt(scn.nextLine());
 			
-			if (bdao.selectExists(BoardNo) == 1) {
+			if (bdao.selectExistsBoardNo(BoardNo) == 1) {
 				// 글 번호 존재.
 				break;
 			}
@@ -188,7 +235,49 @@ public class BoardControl {
 		}else {
 			System.out.println("이미 추천 했습니다.");
 		}
-
+	}
+	// 추천 취소
+	void likeBoardCancel() {
+		int BoardNo = 0; // 블럭 레벨 변수
+		while (true) {
+			System.out.println("추천 취소할 글 번호>");
+			BoardNo = Integer.parseInt(scn.nextLine());
+			
+			if (ldao.selectExistsBoardNo(BoardNo) == 1) {
+				// tbl_board 글 번호 존재.
+				break;
+			}
+			System.out.println("찾는 글 번호 없음. 글 번호 다시 입력>");
+		}
+		
+		int userNo = 0;
+		while (true) {
+			System.out.println("추천 취소할 사용자 번호>");
+			userNo = Integer.parseInt(scn.nextLine());
+			
+//			if (bdao.selectExists(BoardNo) == 1) {
+			if (ldao.selectExistsUserNo(userNo) == 1) {
+				// tbl_like 사용자 번호 존재.
+				break;
+			}
+			System.out.println("찾는 사용자 번호 없음. 사용자 번호 다시 입력>");
+		}
+		
+		LikeVO lvo = new LikeVO();
+		lvo.setBoardNo(BoardNo);
+		lvo.setUserNo(userNo);
+		
+		if (ldao.selectExists(lvo) != 1) {
+			// Like
+			if(ldao.updateLikeDateDeleted(lvo)) {	// tbl_like update date_deleted
+				// Board
+				if(bdao.updateBoardLike(BoardNo)) {
+				}
+				System.out.println("추천 했습니다.");
+			}
+		}else {
+			System.out.println("이미 추천 했습니다.");
+		}
 	}
 
 
@@ -240,7 +329,7 @@ public class BoardControl {
 		while (true) {
 			System.out.println("읽을 글 번호>");
 			boardNo = Integer.parseInt(scn.nextLine());
-			if (bdao.selectExists(boardNo) == 1) {
+			if (bdao.selectExistsBoardNo(boardNo) == 1) {
 				// 글 번호 존재.
 				break;
 			}
@@ -256,6 +345,7 @@ public class BoardControl {
 		bdao.updateBoardView(bvo);						// 조회수 + 1
 		
 //		List<BoardVO> boards = bdao.selectBoard(bvo);
+		
 		List<BoardVO> boards = bdao.selectLike(boardNo);
 		for (BoardVO b : boards) {
 			

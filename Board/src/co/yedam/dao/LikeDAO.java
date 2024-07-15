@@ -42,6 +42,29 @@ public class LikeDAO extends DAO{
 		return false; // 비정상 처리.
 	}
 	
+	// 수정 기능.
+	public boolean updateLikeDateDeleted(LikeVO lvo) {
+		
+		String sql = " 	update 	tbl_like"
+		+ " 	   		set	  	date_deleted = sysdeate"
+		+ "       		where  	board_no = ?";
+		
+		try {
+			conn = getConn();
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, lvo.getBoardNo());
+			int r = psmt.executeUpdate(); // 쿼리 실행.
+			conn.close();
+			if(r == 1) {
+				return true; // 정상 처리
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false; // 비정상 처리.
+	}	
+	
 	
 	// 목록 반환 기능.
 	public List<BoardVO> selectBoard(BoardVO b){
@@ -221,9 +244,17 @@ public class LikeDAO extends DAO{
 	
 	// 추천 사용자 조회
 	public int selectExists(LikeVO lvo) {
-		String sql = "select count(1) from tbl_like";
-		sql += "      where user_no = ?";
-		sql += "      and	board_no = ?";
+		String sql = "	select 	count(1) "
+				+ "		from 	tbl_like l"
+				+ "		join	tbl_board b"
+				+ "		on		l.board_no = b.board_no"
+				+ "		join	tbl_user u"
+				+ "		on		l.user_no = u.user_no"
+				+ "     where 	l.user_no = ?"
+				+ "     and		l.board_no = ?"
+				+ "     and		l.date_deleted is null"
+				+ "     and		b.date_deleted is null"
+				+ "     and		u.date_deleted is null";
 		try {
 			conn = getConn();
 			psmt = conn.prepareStatement(sql);
@@ -243,13 +274,49 @@ public class LikeDAO extends DAO{
 		}
 		return 0;
 	}
+	// 글 번호 조회
+	public int selectExistsBoardNo(int boardNo) {
+		String sql = "	select 	count(1) "
+				+ "		from 	tbl_like l"
+				+ "		join 	tbl_board b"
+				+ "		on	 	l.board_no = b.board_no"
+				+ "     where	board_no = ?"
+				+ "     and		l.date_deleted is null"
+				+ "     and		b.date_deleted is null";
+		try {
+			conn = getConn();
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, boardNo);
+			rs = psmt.executeQuery();
+			int cnt = 0;
+			if(rs.next()) {
+//				return rs.getInt(1);
+				cnt = rs.getInt(1);
+			}
+			conn.close();
+			return cnt;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 
 	// 추천 사용자 죠회
 	public int selectExistsUserNo(int userNo) {
-		String sql = "select count(1) from tbl_like";
-		sql += "      where user_no = ?";
-		sql += "      and 	date_deleted is null";
+//		String sql = "	select 	count(1) "
+//				+ "		from 	tbl_like"
+//				+ "     where 	user_no = ?"
+//				+ "     and 	date_deleted is null";
+		String sql = "	select 	count(1) "
+				+ "		from 	tbl_like l"
+				+ "		join 	tbl_user u"
+				+ "		on	 	l.user_no = user_no"
+				+ "     where 	user_no = ?"
+				+ "     and 	l.date_deleted is null"
+				+ "     and 	u.date_deleted is null";
 		try {
+			conn = getConn();
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, userNo);
 			rs = psmt.executeQuery();
@@ -273,6 +340,7 @@ public class LikeDAO extends DAO{
 				+ "	  from	tbl_board"
 				+ "   where board_no = ?";
 		try {
+			conn = getConn();
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, boardNo);
 			rs = psmt.executeQuery();
