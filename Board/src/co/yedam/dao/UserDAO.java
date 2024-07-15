@@ -396,7 +396,7 @@ public class UserDAO extends DAO{
 	
 	// 단건 조회.
 	public int selectExistsUserdId(String userId) {
-		String sql = "	select	count(1) "
+		String sql = "	select	user_no"
 				+ "		from 	tbl_user"
 				+ "     where	user_id = ?"
 				+ "     and	 	date_deleted is null";
@@ -406,13 +406,13 @@ public class UserDAO extends DAO{
 			psmt = conn.prepareStatement(sql);
 			psmt.setString(1, userId);
 			rs = psmt.executeQuery();
-			int cnt = 0;
+			int userNo = 0;
 			if(rs.next()) {
 //				return rs.getInt(1);
-				cnt = rs.getInt(1);
+				userNo = rs.getInt("user_no");
 			}
 			conn.close();
-			return cnt;
+			return userNo;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

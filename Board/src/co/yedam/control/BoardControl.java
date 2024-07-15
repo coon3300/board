@@ -30,7 +30,7 @@ public class BoardControl {
 			userId = scn.nextLine();
 
 
-			if (udao.selectExistsUserdId(userId) == 1) {
+			if ((userNo = udao.selectExistsUserdId(userId)) != 0) {
 				// ID 존재.
 				break;
 			}

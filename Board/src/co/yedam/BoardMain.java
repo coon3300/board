@@ -21,7 +21,7 @@ public class BoardMain {
 		조회수
 		추천
 		페이지 이동
-		로그인
+		로그인(userNo 저장)
 		
 		to do list
 		달력
