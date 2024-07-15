@@ -46,13 +46,16 @@ public class LikeDAO extends DAO{
 	public boolean updateLikeDateDeleted(LikeVO lvo) {
 		
 		String sql = " 	update 	tbl_like"
-		+ " 	   		set	  	date_deleted = sysdeate"
-		+ "       		where  	board_no = ?";
+		+ " 	   		set	  	date_deleted = sysdate"
+		+ "       		where  	board_no = ?"
+		+ "       		and  	user_no = ?"
+		+ "       		and  	date_deleted is null";
 		
 		try {
 			conn = getConn();
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, lvo.getBoardNo());
+			psmt.setInt(2, lvo.getUserNo());
 			int r = psmt.executeUpdate(); // 쿼리 실행.
 			conn.close();
 			if(r == 1) {
@@ -217,6 +220,8 @@ public class LikeDAO extends DAO{
 				+ "    on      u.user_no = b.user_no"
 				+ "    where   b.date_deleted is null"
 				+ "    order by b.date_created desc";
+		
+		
 		List<BoardVO> list = new ArrayList<>();
 		
 		try {
@@ -303,36 +308,49 @@ public class LikeDAO extends DAO{
 	}
 
 	// 추천 사용자 죠회
-	public int selectExistsUserNo(int userNo) {
+//	public int selectExistsUserNo(int userNo) {
+////		String sql = "	select 	count(1) "
+////				+ "		from 	tbl_like"
+////				+ "     where 	user_no = ?"
+////				+ "     and 	date_deleted is null";
+////		String sql = "	select 	count(1) "
+////				+ "		from 	tbl_like l"
+////				+ "		join 	tbl_user u"
+////				+ "		on	 	l.user_no = u.user_no"
+////				+ "     where 	u.user_no = ?"
+////				+ "     and 	l.date_deleted is null"
+////				+ "     and 	u.date_deleted is null";
+//		
 //		String sql = "	select 	count(1) "
-//				+ "		from 	tbl_like"
-//				+ "     where 	user_no = ?"
-//				+ "     and 	date_deleted is null";
-		String sql = "	select 	count(1) "
-				+ "		from 	tbl_like l"
-				+ "		join 	tbl_user u"
-				+ "		on	 	l.user_no = user_no"
-				+ "     where 	user_no = ?"
-				+ "     and 	l.date_deleted is null"
-				+ "     and 	u.date_deleted is null";
-		try {
-			conn = getConn();
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1, userNo);
-			rs = psmt.executeQuery();
-			int cnt = 0;
-			if(rs.next()) {
-//				return rs.getInt(1);
-				cnt = rs.getInt(1);
-			}
-			conn.close();
-			return cnt;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return 0;
-	}	
+//				+ "		from 	tbl_like l"
+//				+ "		join	tbl_board b"
+//				+ "		on		l.board_no = b.board_no"
+//				+ "		join	tbl_user u"
+//				+ "		on		l.user_no = u.user_no"
+//				+ "     where 	l.user_no = ?"
+//				+ "     and		l.board_no = ?"
+//				+ "     and		l.date_deleted is null"
+//				+ "     and		b.date_deleted is null"
+//				+ "     and		u.date_deleted is null";		
+//		try {
+//			conn = getConn();
+//			psmt = conn.prepareStatement(sql);
+//			psmt.setInt(1, boardNo);
+//			psmt.setInt(2, userNo);
+//			rs = psmt.executeQuery();
+//			int cnt = 0;
+//			if(rs.next()) {
+////				return rs.getInt(1);
+//				cnt = rs.getInt(1);
+//			}
+//			conn.close();
+//			return cnt;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return 0;
+//	}	
 	
 	// 조휘수 업데이트.
 	public String currBoardView(int boardNo) {

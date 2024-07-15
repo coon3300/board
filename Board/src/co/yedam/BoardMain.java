@@ -19,14 +19,12 @@ public class BoardMain {
 		to did list
 		게시판 쓰기, 읽기, 수정, 삭제
 		조회수
-		추천
+		추천/취소
 		페이지 이동
 		로그인(userNo 저장)
 		
 		to do list
 		달력
-		DB 새로 생성 후 테스트
-		추천 취소
 		댓글
 		쪽지
 		회원 가입

@@ -21,6 +21,8 @@ public class BoardControl {
 	UserDAO udao = new UserDAO();
 	
 	int userNo = 0;
+	int boardNo = 0;
+	String likeMark = null;
 	
 	public void login() {
 		
@@ -28,7 +30,6 @@ public class BoardControl {
 		while (true) {
 			System.out.print("ID 입력>");
 			userId = scn.nextLine();
-
 
 			if ((userNo = udao.selectExistsUserdId(userId)) != 0) {
 				// ID 존재.
@@ -42,7 +43,7 @@ public class BoardControl {
 			System.out.print("비밀번호 입력>");
 			userPwd = scn.nextLine();
 			
-			System.out.println("userPwd : " + userPwd);
+//			System.out.println("userPwd : " + userPwd);
 //			System.out.println("udao.selectUserPwd(userNo) : " + udao.selectUserPwd(userNo));
 			
 //			UserVO uvo= new UserVO();
@@ -67,12 +68,12 @@ public class BoardControl {
 
 		while (isTrue) {
 			switch(page) {
-			case "R":
-			case "r":
-				System.out.println("------------------------------------------------------");
-				System.out.println("  (L)조회  (C)쓰기  (R)읽기  (U)수정  (D)삭제  (X)종료  (+)추천");
-				System.out.println("------------------------------------------------------");
-				break;
+//			case "R":
+//			case "r":
+//				System.out.println("------------------------------------------------------");
+//				System.out.println("  (L)조회  (C)쓰기  (R)읽기  (U)수정  (D)삭제  (X)종료  (+)추천");
+//				System.out.println("------------------------------------------------------");
+//				break;
 			default :
 				System.out.println("------------------------------------------------------");
 				System.out.println("  (L)조회  (C)쓰기  (R)읽기  (U)수정  (D)삭제  (X)종료  ");
@@ -205,30 +206,30 @@ public class BoardControl {
 	
 	// ㅊ천
 	void likeBoard() {
-		int BoardNo = 0; // 블럭 레벨 변수
-		while (true) {
-			System.out.println("추천할 글 번호>");
-			BoardNo = Integer.parseInt(scn.nextLine());
-			
-			if (bdao.selectExistsBoardNo(BoardNo) == 1) {
-				// 글 번호 존재.
-				break;
-			}
-			System.out.println("찾는 글 번호 없음. 글 번호 다시 입력>");
-		}
-		int userNo = 0;
-		System.out.println("추천할 사용자 번호>");
-		userNo = Integer.parseInt(scn.nextLine());
+//		int boardNo = 0; // 블럭 레벨 변수
+//		while (true) {
+//			System.out.println("추천할 글 번호>");
+//			BoardNo = Integer.parseInt(scn.nextLine());
+//			
+//			if (bdao.selectExistsBoardNo(BoardNo) == 1) {
+//				// 글 번호 존재.
+//				break;
+//			}
+//			System.out.println("찾는 글 번호 없음. 글 번호 다시 입력>");
+//		}
+//		int userNo = 0;
+//		System.out.println("추천할 사용자 번호>");
+//		userNo = Integer.parseInt(scn.nextLine());
 		
 		LikeVO lvo = new LikeVO();
-		lvo.setBoardNo(BoardNo);
+		lvo.setBoardNo(boardNo);
 		lvo.setUserNo(userNo);
 		
-		if (ldao.selectExists(lvo) != 1) {
+		if (ldao.selectExists(lvo) != 1) { // 추천 기록 없으면
 			// Like
 			if(ldao.insertLike(lvo)) {
 				// Board
-				if(bdao.updateBoardLike(BoardNo)) {
+				if(bdao.updateBoardLike(boardNo)) {
 				}
 				System.out.println("추천 했습니다.");
 			}
@@ -238,46 +239,46 @@ public class BoardControl {
 	}
 	// 추천 취소
 	void likeBoardCancel() {
-		int BoardNo = 0; // 블럭 레벨 변수
-		while (true) {
-			System.out.println("추천 취소할 글 번호>");
-			BoardNo = Integer.parseInt(scn.nextLine());
-			
-			if (ldao.selectExistsBoardNo(BoardNo) == 1) {
-				// tbl_board 글 번호 존재.
-				break;
-			}
-			System.out.println("찾는 글 번호 없음. 글 번호 다시 입력>");
-		}
-		
-		int userNo = 0;
-		while (true) {
-			System.out.println("추천 취소할 사용자 번호>");
-			userNo = Integer.parseInt(scn.nextLine());
-			
-//			if (bdao.selectExists(BoardNo) == 1) {
-			if (ldao.selectExistsUserNo(userNo) == 1) {
-				// tbl_like 사용자 번호 존재.
-				break;
-			}
-			System.out.println("찾는 사용자 번호 없음. 사용자 번호 다시 입력>");
-		}
+//		int boardNo = 0; // 블럭 레벨 변수
+//		while (true) {
+//			System.out.println("추천 취소할 글 번호>");
+//			boardNo = Integer.parseInt(scn.nextLine());
+//			
+//			if (ldao.selectExistsBoardNo(boardNo) == 1) {
+//				// tbl_board 글 번호 존재.
+//				break;
+//			}
+//			System.out.println("찾는 글 번호 없음. 글 번호 다시 입력>");
+//		}
+//		
+//		int userNo = 0;
+//		while (true) {
+//			System.out.println("추천 취소할 사용자 번호>");
+//			userNo = Integer.parseInt(scn.nextLine());
+//			
+////			if (bdao.selectExists(BoardNo) == 1) {
+//			if (ldao.selectExistsUserNo(userNo) == 1) {
+//				// tbl_like 사용자 번호 존재.
+//				break;
+//			}
+//			System.out.println("찾는 사용자 번호 없음. 사용자 번호 다시 입력>");
+//		}
 		
 		LikeVO lvo = new LikeVO();
-		lvo.setBoardNo(BoardNo);
+		lvo.setBoardNo(boardNo);
 		lvo.setUserNo(userNo);
 		
-		if (ldao.selectExists(lvo) != 1) {
+		if (ldao.selectExists(lvo) == 1) { // 추천 기록 있으면
 			// Like
 			if(ldao.updateLikeDateDeleted(lvo)) {	// tbl_like update date_deleted
 				// Board
-				if(bdao.updateBoardLike(BoardNo)) {
+				if(bdao.updateBoardLike(boardNo)) {
 				}
-				System.out.println("추천 했습니다.");
+				System.out.println("추천 취소 했습니다.");
 			}
 		}else {
-			System.out.println("이미 추천 했습니다.");
-		}
+			System.out.println("이미 추천취소 했습니다.");
+		}		
 	}
 
 
@@ -325,7 +326,8 @@ public class BoardControl {
 		System.out.printf("(<)이전 페이지         [ %d페이지 / 총 %d페이지 ]        (>)다음 페이지\n", bdao.getCurrPage(), bdao.getTotPage());
 	} // end of boardListAll()
 	void readBoard() {
-		int boardNo = 0; // 블럭 레벨 변수
+//		int boardNo = 0; // 블럭 레벨 변수
+		boardNo = 0;
 		while (true) {
 			System.out.println("읽을 글 번호>");
 			boardNo = Integer.parseInt(scn.nextLine());
@@ -338,19 +340,30 @@ public class BoardControl {
 		
 		BoardVO bvo = new BoardVO();
 		bvo.setBoardNo(boardNo);
-		
 		String boardView = bdao.currBoardView(boardNo);	// boardNo에 해당하는 글의 조회수 가져오기
 		bvo.setBoardView(boardView);					// 조회수 set
-		
 		bdao.updateBoardView(bvo);						// 조회수 + 1
 		
 //		List<BoardVO> boards = bdao.selectBoard(bvo);
+		List<BoardVO> boards = bdao.selectLike(boardNo);//
 		
-		List<BoardVO> boards = bdao.selectLike(boardNo);
-		for (BoardVO b : boards) {
+		System.out.println("uesrNo : " + userNo);
+		
+		LikeVO lvo = new LikeVO();
+		lvo.setUserNo(userNo);
+		lvo.setBoardNo(boardNo);
+		
+		
+		for (BoardVO b : boards) {	// 1번 실행
+			if(ldao.selectExists(lvo) == 1) {
+				likeMark = "(-)";
+			}else {
+				likeMark = "(+)";
+			}
+			
 			
 			System.out.println("------------------------------------------------------");
-			System.out.printf("%4s %-20s %4s %4s %4s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", "작성일시    ");
+			System.out.printf("%4s %-20s %4s %4s %4s%s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", likeMark, "작성일시    ");
 			System.out.println("------------------------------------------------------");
 			System.out.println();
 			System.out.println(b.briefShow());

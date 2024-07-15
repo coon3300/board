@@ -298,13 +298,17 @@ public class BoardDAO extends DAO{
 				+ "            	b.title         as title,"
 				+ "            	u.user_name     as user_name,"
 				+ "            	b.board_view    as board_view,"
-				+ "        		("
-				+ "            	SELECT COUNT(*)"
-				+ "            	FROM tbl_like l"
-				+ "            	WHERE l.board_no = b.board_no"
-				+ "        		) as board_like,"
+//				+ "        		("
+//				+ "            	SELECT 	COUNT(*)"
+//				+ "            	FROM 	tbl_like l"
+//				+ "            	WHERE 	l.board_no = b.board_no"
+//				+ "            	and		l.date_deleted is null"
+//				+ "            	and		b.date_deleted is null"
+//				+ "        		) as board_like,"
+				+ "        		b.board_like,"
 				+ "            	b.board_content as board_content,"
-				+ "            	b.date_updated  as date_updated"
+				+ "            	b.date_updated  as date_updated,"
+				+ "            	b.date_created  as date_created"
 				+ "    	from    tbl_user    u"
 				+ "    	join    tbl_board   b"
 				+ "    	on      u.user_no = b.user_no"
@@ -331,6 +335,7 @@ public class BoardDAO extends DAO{
 				bvo.setBoardLike(rs.getString("board_like"));
 				bvo.setBoardContent(rs.getString("board_content"));
 				bvo.setDateUpdated(rs.getDate("date_updated"));
+				bvo.setDateCreated(rs.getDate("date_created"));
 				
 				list.add(bvo);
 			}
