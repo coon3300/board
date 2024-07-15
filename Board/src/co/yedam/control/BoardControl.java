@@ -71,14 +71,14 @@ public class BoardControl {
 		while (isTrue) {
 			switch(page) {
 			case "r":
-				System.out.println("------------------------------------------------------");
+				System.out.println("-------------------------------------------------------");
 				System.out.println(" (L)조회     (U)수정     (D)삭제     (C)댓글 쓰기    (X)종료  ");
-				System.out.println("------------------------------------------------------");
+				System.out.println("-------------------------------------------------------");
 				break;
 			default :
-				System.out.println("------------------------------------------------------");
-				System.out.println("  (L)조회   (C)쓰기   (R)읽기   (U)수정   (D)삭제   (X)종료  ");
-				System.out.println("------------------------------------------------------");
+				System.out.println("-------------------------------------------------------");
+				System.out.println(" (L)조회    (C)쓰기    (R)읽기    (U)수정    (D)삭제   (X)종료 ");
+				System.out.println("-------------------------------------------------------");
 			}
 		
 			System.out.print("선택> ");
@@ -332,24 +332,26 @@ public class BoardControl {
 	void boardList() {
 //		List<BoardVO> boards = bdao.selectListAll();
 		List<BoardVO> boards = bdao.selectList(); // 4페이지 앞까지, 3페이지 부터 출력
-		System.out.println("------------------------------------------------------");
+		System.out.println("-------------------------------------------------------");
 		System.out.printf("%4s %-20s %4s %4s %4s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", "작성일시    ");
-		System.out.println("------------------------------------------------------");
+		System.out.println("-------------------------------------------------------");
 		for (BoardVO bvo : boards) {
 			System.out.println(bvo.briefShow());
 		}
-		System.out.printf("(<)이전 페이지         [ %d페이지 / 총 %d페이지 ]        (>)다음 페이지\n", bdao.getCurrPage(), bdao.getTotPage());
+		System.out.printf("                         - %d -\n", bdao.getCurrPage());
+		System.out.printf("(<)이전 page            [ 총 %d page ]          (>)다음 page\n", bdao.getTotPage());
 	} // end of boardListAll()
 	void boardListAll() {
 //		List<BoardVO> boards = bdao.selectListAll();
 		List<BoardVO> boards = bdao.selectListAll(); // 4페이지 앞까지, 3페이지 부터 출력
-		System.out.println("------------------------------------------------------");
+		System.out.println("-------------------------------------------------------");
 		System.out.printf("%4s %-20s %4s %4s %4s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", "작성일시    ");
-		System.out.println("------------------------------------------------------");
+		System.out.println("-------------------------------------------------------");
 		for (BoardVO bvo : boards) {
 			System.out.println(bvo.briefShow());
 		}
-		System.out.printf("(<)이전 페이지         [ %d페이지 / 총 %d페이지 ]        (>)다음 페이지\n", bdao.getCurrPage(), bdao.getTotPage());
+		System.out.printf("                         - %d -\n", bdao.getCurrPage());
+		System.out.printf("(<)이전 page            [ 총 %d page ]          (>)다음 page\n", bdao.getTotPage());
 	} // end of boardListAll()
 	void readBoard() {
 //		int boardNo = 0; // 블럭 레벨 변수

@@ -172,6 +172,39 @@ public class BoardDAO extends DAO{
 //				+ "WHERE   rn > ?" // 앞에서 부터 ? 만큼 자름 : row * (endPage-1) --> 5 * 2
 //				+ "";
 		
+//		String sql =""
+//				+ "	SELECT *"
+//				+ "	FROM    "
+//				+ "	("
+//				+ "    SELECT ROWNUM AS rn,"
+//				+ "            board_no,"
+//				+ "            title,"
+//				+ "            user_name,"
+//				+ "            board_view,"
+//				+ "            board_like,"
+//				+ "            date_created"
+//				+ "    FROM ("
+//				+ "        SELECT"
+//				+ "            "
+//				+ "            b.board_no as board_no,"
+//				+ "            b.title as title,"
+//				+ "            u.user_name as user_name,"
+//				+ "            b.board_view as board_view,"
+//				+ "            b.board_like as board_like,"
+//				+ "            b.date_created as date_created"
+//				+ "        FROM"
+//				+ "            tbl_user u"
+//				+ "        JOIN tbl_board b ON u.user_no = b.user_no"
+//				+ "        WHERE"
+//				+ "            b.date_deleted IS NULL"
+//				+ "        AND u.date_deleted IS NULL"
+//				+ ""
+//				+ "        ORDER BY  b.date_created desc"
+//				+ "    )"
+//				+ "	)"
+//				+ "	where rn > ? and rn <= ?"
+//				+ "	";
+		
 		String sql =""
 				+ "	SELECT *"
 				+ "	FROM    "
@@ -182,16 +215,24 @@ public class BoardDAO extends DAO{
 				+ "            user_name,"
 				+ "            board_view,"
 				+ "            board_like,"
+				+ "            cmt_count,"
 				+ "            date_created"
 				+ "    FROM ("
 				+ "        SELECT"
 				+ "            "
-				+ "            b.board_no as board_no,"
-				+ "            b.title as title,"
-				+ "            u.user_name as user_name,"
-				+ "            b.board_view as board_view,"
-				+ "            b.board_like as board_like,"
-				+ "            b.date_created as date_created"
+				+ "            	b.board_no as board_no,"
+				+ "            	b.title as title,"
+				+ "            	u.user_name as user_name,"
+				+ "            	b.board_view as board_view,"
+				+ "            	b.board_like as board_like,"
+				+ "        		("
+				+ "            		SELECT 	COUNT(*)"
+				+ "            		FROM 	tbl_comment c"
+				+ "            		WHERE 	c.board_no = b.board_no"
+				+ "            		and		c.date_deleted is null"
+				+ "            		and		b.date_deleted is null"
+				+ "            	)as cmt_count,"
+				+ "            	b.date_created as date_created"
 				+ "        FROM"
 				+ "            tbl_user u"
 				+ "        JOIN tbl_board b ON u.user_no = b.user_no"
@@ -221,6 +262,8 @@ public class BoardDAO extends DAO{
 				bvo.setBoardView(rs.getString("board_view"));
 				bvo.setBoardLike(rs.getString("board_like"));
 				bvo.setDateCreated(rs.getDate("date_created"));
+				
+				bvo.setCmtCount(rs.getInt("cmt_count"));
 				
 				list.add(bvo);
 			}

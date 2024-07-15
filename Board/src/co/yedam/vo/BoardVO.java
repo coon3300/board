@@ -16,6 +16,16 @@ public class BoardVO {
 	
 	private String userName;		// user_name
 	
+	private int cmtCount;
+	
+	public int getCmtCount() {
+		return cmtCount;
+	}
+
+
+	public void setCmtCount(int cmtCount) {
+		this.cmtCount = cmtCount;
+	}
 	public static int currPage = 0;
 
 	public String getUserName() {
@@ -30,13 +40,19 @@ public class BoardVO {
 
 	public String briefShow() {
 //		return boardNo + "  " + title + "  " + boardView + "  " + boardLike + "  " + dateCreated;
+		String cmtCnt = "";
+		if(this.cmtCount > 0 ) {
+			cmtCnt += "[" + this.cmtCount + "]"; 
+		}
+		
 		String blank ="";
-		for (int i = 0; i <= (20-this.title.length())/2; i++) {
+		int titleLengh = (this.title.length() + cmtCnt.length());
+		for (int i = 0; i <= ((20 - titleLengh) / 2); i++) {
 			blank += " ";
 		}
 		return String.format("%4d %-20s %4s %4s %4s %12s", 
 				this.boardNo,
-				blank +	this.title,
+				blank +	this.title + cmtCnt,
 				this.userName,
 				this.boardView,
 				this.boardLike,

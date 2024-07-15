@@ -22,10 +22,9 @@ public class BoardMain {
 		추천/취소
 		페이지 이동
 		로그인
-		댓글
+		댓글, 댓글 숫자 표시
 		
 		to do list
-		list 메뉴, read 메뉴 구분
 		달력
 		쪽지
 		회원 가입
