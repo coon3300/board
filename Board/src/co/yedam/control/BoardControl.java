@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Scanner;
 
 import co.yedam.dao.BoardDAO;
+import co.yedam.dao.CommentDAO;
 import co.yedam.dao.LikeDAO;
 import co.yedam.dao.UserDAO;
 import co.yedam.vo.BoardVO;
+import co.yedam.vo.CommentVO;
 import co.yedam.vo.LikeVO;
-import co.yedam.vo.UserVO;
 
 /*
  * 사용자 입력을 가이드, 처리된 결과 출력.
@@ -19,6 +20,7 @@ public class BoardControl {
 	BoardDAO bdao = new BoardDAO();
 	LikeDAO ldao = new LikeDAO();
 	UserDAO udao = new UserDAO();
+	CommentDAO cdao = new CommentDAO();
 	
 	int userNo = 0;
 	int boardNo = 0;
@@ -68,15 +70,14 @@ public class BoardControl {
 
 		while (isTrue) {
 			switch(page) {
-//			case "R":
-//			case "r":
-//				System.out.println("------------------------------------------------------");
-//				System.out.println("  (L)조회  (C)쓰기  (R)읽기  (U)수정  (D)삭제  (X)종료  (+)추천");
-//				System.out.println("------------------------------------------------------");
-//				break;
+			case "r":
+				System.out.println("------------------------------------------------------");
+				System.out.println(" (L)조회     (U)수정     (D)삭제     (C)댓글 쓰기    (X)종료  ");
+				System.out.println("------------------------------------------------------");
+				break;
 			default :
 				System.out.println("------------------------------------------------------");
-				System.out.println("  (L)조회  (C)쓰기  (R)읽기  (U)수정  (D)삭제  (X)종료  ");
+				System.out.println("  (L)조회   (C)쓰기   (R)읽기   (U)수정   (D)삭제   (X)종료  ");
 				System.out.println("------------------------------------------------------");
 			}
 		
@@ -115,8 +116,12 @@ public class BoardControl {
 				break;
 			case "C":
 			case "c":
-				addBoard();
-				page = ""; 
+				if(page.equals("r")) {
+					addComment();
+				}else {
+					addBoard();
+					page = ""; 
+				}
 				break;
 			case "R":
 			case "r":
@@ -283,21 +288,42 @@ public class BoardControl {
 
 
 	void addBoard() {
-		System.out.println(">사용자 번호 입력 : ");
-		int UserNo = Integer.parseInt(scn.nextLine());
+//		System.out.println(">사용자 번호 입력 : ");
+//		int userNo = Integer.parseInt(scn.nextLine());
 		System.out.println(">제목 입력 : ");
 		String title = scn.nextLine();
 		System.out.println(">내용 입력 : ");
 		String boardContent = scn.nextLine();
 		
 		BoardVO bvo = new BoardVO();
-		bvo.setUserNo(UserNo);
+		bvo.setUserNo(userNo);
 		bvo.setTitle(title);
 		bvo.setBoardContent(boardContent);
 		
 		// 입력기능 호출.
 		if (bdao.insertBoard(bvo)) {
 			System.out.println("저장완료.");
+		} else {
+			System.out.println("처리중 예외발생!");
+		}
+	}
+	void addComment() {
+//		System.out.println(">사용자 번호 입력 : ");
+//		int userNo = Integer.parseInt(scn.nextLine());
+//		System.out.println(">제목 입력 : ");
+//		String title = scn.nextLine();
+		System.out.println(">내용 입력 : ");
+		String commentContent = scn.nextLine();
+		
+//		BoardVO bvo = new BoardVO();
+		CommentVO cvo = new CommentVO();
+		cvo.setUserNo(userNo);
+		cvo.setBoardNo(boardNo);
+		cvo.setCmtContent(commentContent);
+		
+		// 입력기능 호출.
+		if (cdao.insertComment(cvo)) {
+			System.out.println("댓글 등록 완료.");
 		} else {
 			System.out.println("처리중 예외발생!");
 		}
@@ -353,17 +379,14 @@ public class BoardControl {
 		lvo.setUserNo(userNo);
 		lvo.setBoardNo(boardNo);
 		
-		
 		for (BoardVO b : boards) {	// 1번 실행
 			if(ldao.selectExists(lvo) == 1) {
 				likeMark = "(-)";
 			}else {
 				likeMark = "(+)";
 			}
-			
-			
 			System.out.println("------------------------------------------------------");
-			System.out.printf("%4s %-20s %4s %4s %4s%s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", likeMark, "작성일시    ");
+			System.out.printf("%4s %-20s %4s %4s %s%s %12s\n","글번호", "        제목", "작성자", "조회수", "추천", likeMark, "작성일시    ");
 			System.out.println("------------------------------------------------------");
 			System.out.println();
 			System.out.println(b.briefShow());
@@ -373,8 +396,21 @@ public class BoardControl {
 			System.out.println();
 			System.out.println(b.getBoardContent());
 			System.out.println();
-			
 			break; // boards 리스트에 1개의 객체만 리턴 : 1번 실행 후 for문 탈출
 		}
+		
+		// 댓글 리스트
+		List<CommentVO> comments = cdao.selectList(boardNo);//
+		CommentVO cvo = new CommentVO();
+		cvo.setUserNo(userNo);
+		cvo.setBoardNo(boardNo);
+		
+		System.out.println("-----");
+		System.out.println("댓 글 |");
+		for (CommentVO c : comments) {	// 1번 실행
+			System.out.println("------------------------------------------------------");
+			System.out.println(c.getUserName() + " | " + c.getCmtContent());
+		}
+		
 	} // end of readBoard()
 }

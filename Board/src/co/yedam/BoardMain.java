@@ -21,11 +21,12 @@ public class BoardMain {
 		조회수
 		추천/취소
 		페이지 이동
-		로그인(userNo 저장)
+		로그인
+		댓글
 		
 		to do list
+		list 메뉴, read 메뉴 구분
 		달력
-		댓글
 		쪽지
 		회원 가입
 		 */
