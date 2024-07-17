@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yedam.mapper.StudentMapper">
+  <select id="studentList" resultType="student">
+    select * from tbl_student order by std_no
+  </select>
+  
+  <insert id="insertStudent" parameterType="student">
+  insert into tbl_student (std_no, std_name, std_phone, birth_date)
+  values(#{stdNo}, #{stdName} , #{stdPhone}, #{birthDate})
+  </insert>
+  
+  <update id="updateStudent" parameterType="student">
+  update tbl_student 
+  set std_phone = #{stdPhone} 
+  where std_no = #{stdNo}  
+  </update>
+  
+  <delete id="deleteStudent" parameterType="string">
+  delete tbl_student 
+  where std_no = #{stdNo}  
+  </delete>
+
+  <select id="selectOne" parameterType="string" resultType="student">
+  	select *
+  	from tbl_student
+  	where std_no = #{stdNo}  
+  </select>
+</mapper>
